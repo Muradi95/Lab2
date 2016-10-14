@@ -9,8 +9,8 @@ public class Escaper {
 
 	public void createEnviroment() { 
 		RobotWorld  world = RobotWorld.load("src/room.txt"); 
-		robot = new Robot(3, 3, Robot.WEST, world);
-		robot.setDelay(150);
+		robot = new Robot(4, 3, Robot.EAST, world);
+		robot.setDelay(100);
 	}//createEnviroment
 
 	//before: robot is inside the room
@@ -19,7 +19,7 @@ public class Escaper {
 
 		findWall();
 
-		while(!atEndOfLabyrinth()) {
+		while(!atEntrance()) {
 
 			if (checkDirectionRight())
 				robot.move();
@@ -30,22 +30,20 @@ public class Escaper {
 
     //before:the robot is on one of the cells
 	//after: the robot is still on the same cell, returning a boolean to tell if it's in the doorjamb
-	private boolean atEndOfLabyrinth(){
-		robot.move();
+	private boolean atEntrance(){
+
+		boolean front = robot.frontIsClear();
 		robot.turnLeft();
 		boolean leftWall = robot.frontIsClear();
 		robot.turnLeft();
-		boolean wall = robot.frontIsClear();
+		boolean back = robot.frontIsClear();
 		robot.turnLeft();
 		boolean rightWall = robot.frontIsClear();
 		robot.turnLeft();
-		boolean wall2 = robot.frontIsClear();
-		boolean b = false;
-		if(leftWall && rightWall || wall && wall2)
-		{
-			b = true;
-		}
-		return b;
+		if(!leftWall && !rightWall || !back && !front)
+			return true;
+		else
+			return false;
 
 	}
 
@@ -53,11 +51,11 @@ public class Escaper {
 	//after: the robot has reached a wall and turned left
 	private void findWall(){
 
-		while(robot.frontIsClear() && !atEndOfLabyrinth())
+		while(robot.frontIsClear() && !atEntrance())
 		{
 			robot.move();
 		}
-		if (!atEndOfLabyrinth())
+		if (!atEntrance())
 		robot.turnLeft();
 	}
 
